@@ -1,10 +1,12 @@
-###########################################################################################
-# DGVMresilience.R                                                                        #
-# R SCRIPT FOR ANALYSING MODELLED GLOBAL VEGETATION RESILIENCE TRENDS IN A DGVM           #
-# Author: Dr. David I. Armstrong McKay [Georesilience Analytics; Uni. Exeter]             #
-# Paper: Lenton et al., 2022: "A resilience sensing system for the biosphere", PhilTransB #
-# ISIMIP2b data from: https://doi.org/10.5880/PIK.2019.012 and https://data.isimip.org/   #
-###########################################################################################
+############################################################################################
+# DGVMresilience.R                                                                         #
+# R SCRIPT FOR ANALYSING GLOBAL VEGETATION RESILIENCE TRENDS IN A DYNAMIC GENERAL          #
+#  VEGETATION MODEL (DGVM)                                                                 #
+# Code author: Dr. David I. Armstrong McKay [Georesilience Analytics; Uni. Exeter]         #
+# Written for: Lenton et al., 2022: "A resilience sensing system for the biosphere",       # 
+#  PhilTransB, doi:10.1098/rstb.2021.0383                                                  #
+# ISIMIP2b data from: https://doi.org/10.5880/PIK.2019.012 and https://data.isimip.org/    #
+############################################################################################
 #
 ### R Initialisation ###
 #
@@ -189,6 +191,7 @@ for (l in 1:n) { #for every row (i.e. pixel)
 #
 plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50 <- cbind(GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf[,1:2],kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50) #add co-ordinates
 names(plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50) <- c('x','y','kendall_tau') #rename columns
+plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outnidf <- plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50 #save a copy as a df for analysis below
 coordinates(plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50) = ~x+y #assign co-ordinates for spdf gridding
 gridded(plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50) = TRUE #turn into an spdf
 plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outniraster <- raster(plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50) #turn in to raster for plotting
@@ -197,8 +200,8 @@ plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outniraster <- 
 #
 plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outnidf <- plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outnidf[order(-plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outnidf$y,plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outnidf$x),] #make sure df order matches ncfile_df (otherwise misaligned)
 plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outnidf_masked <- plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outnidf[!is.na(ncfile_mean_trim_masked_df[,3]),] #mask NPP ACF Kendall Tau layer with low NPP mask
-KendallTau_unmaskedarea_mean <- mean(plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outnidf_masked[,1],na.rm=TRUE) #calculate mean of Kendall Tau in unmasked area
-KendallTau_unmaskedpositiveNPPACFarea_mean <- mean(plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outnidf_masked[plot_GFDL_rcp8p5_20002019_npp_roll_bfast_outraster_ni_acfmeandf[,1]>0,1],na.rm=TRUE) #calculate mean of Kendall Tau in unmasked area where NPP ACF > 0
+KendallTau_unmaskedarea_mean <- mean(plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outnidf_masked[,3],na.rm=TRUE) #calculate mean of Kendall Tau in unmasked area
+KendallTau_unmaskedpositiveNPPACFarea_mean <- mean(plot_kendtau_GFDL_rcp8p5_20002019_npp_roll_bfast_out_ni_acf_RW50_outnidf_masked[plot_GFDL_rcp8p5_20002019_npp_roll_bfast_outraster_ni_acfmeandf[,1]>0,3],na.rm=TRUE) #calculate mean of Kendall Tau in unmasked area where NPP ACF > 0
 save.image("./ISIMIP2b_LPJmL_GFDLESM2M_20002019_roll.RData") #save progress
 
 #
